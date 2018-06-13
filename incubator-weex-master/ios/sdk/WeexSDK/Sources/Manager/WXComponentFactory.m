@@ -46,6 +46,7 @@
 
 @implementation WXComponentFactory
 {
+    //在WXComponentFactory中，_componentConfigs会存储所有的组件配置，注册的过程也是生成_componentConfigs的过程。
     NSMutableDictionary *_componentConfigs;
     NSLock *_configLock;
 }
@@ -122,7 +123,7 @@
 }
 
 #pragma mark Private
-
+//遍历所有的异步方法。
 - (NSMutableDictionary *)_componentMethodMapsWithName:(NSString *)name
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -221,7 +222,7 @@
     WXComponentConfig *config = nil;
     [_configLock lock];
     config = [_componentConfigs objectForKey:name];
-    
+    // 如果组件已经注册过，会提示重复注册，并且覆盖原先的注册行为
     if(config){
         WXLogInfo(@"Overrider component name:%@ class:%@, to name:%@ class:%@",
                   config.name, config.class, name, clazz);
@@ -229,6 +230,7 @@
     
     config = [[WXComponentConfig alloc] initWithName:name class:NSStringFromClass(clazz) pros:pros];
     [_componentConfigs setValue:config forKey:name];
+     // 注册类方法
     [config registerMethods];
     
     [_configLock unlock];

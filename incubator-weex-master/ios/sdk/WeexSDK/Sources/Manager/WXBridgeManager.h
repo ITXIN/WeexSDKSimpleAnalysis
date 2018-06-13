@@ -27,7 +27,7 @@ extern void WXPerformBlockOnBridgeThread(void (^block)(void));
 
 @interface WXBridgeManager : NSObject
 
-/**
+/** 弱引用WXSDKInstance实例，是为了能调用WXSDKInstance的一些属性和方法
  *  return instance at the top of the stack.
  **/
 @property (nonatomic, weak, readonly) WXSDKInstance *topInstance;

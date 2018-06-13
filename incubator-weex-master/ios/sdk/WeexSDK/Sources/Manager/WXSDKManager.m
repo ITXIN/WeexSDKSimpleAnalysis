@@ -21,7 +21,7 @@
 #import "WXThreadSafeMutableDictionary.h"
 
 @interface WXSDKManager ()
-
+//用来和JS交互的Bridge
 @property (nonatomic, strong) WXBridgeManager *bridgeMgr;
 
 @property (nonatomic, strong) WXThreadSafeMutableDictionary *instanceDict;

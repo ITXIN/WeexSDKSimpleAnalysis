@@ -93,9 +93,9 @@ NSError *error = [NSError errorWithDomain:WX_ERROR_DOMAIN \
 #define WX_MONITOR_PERF_SET(tag, value, instance) [WXMonitor performancePoint:tag didSetValue:value withInstance:instance];
 #define WX_MONITOR_INSTANCE_PERF_IS_RECORDED(tag, instance) [WXMonitor performancePoint:tag isRecordedWithInstance:instance]
 #define WX_MONITOR_INSTANCE_PERF_COMMIT(instance) [WXMonitor performanceFinish:instance]
-
+//记录下各个操作的tag值和记录成功和失败的原因
 @interface WXMonitor : NSObject
-
+// 上面的一些宏分别对应下面这些具体的方法实现。
 + (void)performancePoint:(WXPerformanceTag)tag willStartWithInstance:(WXSDKInstance *)instance;
 + (void)performancePoint:(WXPerformanceTag)tag didEndWithInstance:(WXSDKInstance *)instance;
 + (void)performancePoint:(WXPerformanceTag)tag didSetValue:(double)value withInstance:(WXSDKInstance *)instance;

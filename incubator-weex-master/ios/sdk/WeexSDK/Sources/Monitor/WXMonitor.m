@@ -40,7 +40,7 @@ NSString *const kEndKey = @"end";
 @implementation WXMonitor
 
 #pragma mark - Performance Monitor
-
+//线程安全的字典
 static WXThreadSafeMutableDictionary *globalPerformanceDict;
 
 + (void)performancePoint:(WXPerformanceTag)tag willStartWithInstance:(WXSDKInstance *)instance

@@ -73,9 +73,11 @@
     if (!clazz || !name) {
         return;
     }
+    // 1. WXModuleFactory注册模块
     NSString *moduleName = [WXModuleFactory registerModule:name withClass:clazz];
+     // 2.遍历所有同步和异步方法
     NSDictionary *dict = [WXModuleFactory moduleMethodMapsWithName:moduleName];
-    
+    // 3.把模块注册到WXBridgeManager中
     [[WXSDKManager bridgeMgr] registerModules:dict];
 }
 
@@ -120,6 +122,7 @@
 
 + (void)registerComponent:(NSString *)name withClass:(Class)clazz
 {
+    //如果被标记成了@"tree"，那么在syncQueue堆积了很多任务的时候，会被强制执行一次layout
     [self registerComponent:name withClass:clazz withProperties: @{@"append":@"tree"}];
 }
 
@@ -135,10 +138,12 @@
     }
 
     WXAssert(name && clazz, @"Fail to register the component, please check if the parameters are correct ！");
-    
+    // 1.WXComponentFactory注册组件的方法。
     [WXComponentFactory registerComponent:name withClass:clazz withPros:properties];
+    // 2.遍历出所有异步的方法
     NSMutableDictionary *dict = [WXComponentFactory componentMethodMapsWithName:name];
     dict[@"type"] = name;
+     // 3.把组件注册到WXBridgeManager中，如果properties被标记成了@"tree"，那么在syncQueue堆积了很多任务的时候，会被强制执行一次layout
     if (properties) {
         NSMutableDictionary *props = [properties mutableCopy];
         if ([dict[@"methods"] count]) {
@@ -197,6 +202,7 @@
 + (void)initSDKEnvironment
 {
     NSString *fileName = @"weex-main-jsfm";
+    //是否是多上下文，如果是多上下文weex-main-jsfm否则native-bundle-main
     [WXSDKManager sharedInstance].multiContext = YES;
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"createInstanceUsingMutliContext"]) {
@@ -208,8 +214,9 @@
     }
     NSString *filePath = [[NSBundle bundleForClass:self] pathForResource:fileName ofType:@"js"];
     NSString *script = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    // 初始化SDK环境
     [WXSDKEngine initSDKEnvironment:script];
-    
+     // 模拟器版本特殊代码
 #if TARGET_OS_SIMULATOR
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -238,6 +245,7 @@
 
 + (void)initSDKEnvironment:(NSString *)script
 {
+     // 打点记录状态
     WX_MONITOR_PERF_START(WXPTInitalize)
     WX_MONITOR_PERF_START(WXPTInitalizeSync)
     
@@ -249,7 +257,9 @@
     }
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+         // 注册Components，Modules，Handlers
         [self registerDefaults];
+        // 执行JsFramework
         [[WXSDKManager bridgeMgr] executeJsFramework:script];
     });
     

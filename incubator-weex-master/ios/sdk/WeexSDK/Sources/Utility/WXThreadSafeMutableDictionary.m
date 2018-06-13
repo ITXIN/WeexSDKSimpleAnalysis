@@ -24,7 +24,7 @@
 
 @interface WXThreadSafeMutableDictionary ()
 {
-    pthread_mutex_t _safeThreadDictionaryMutex;
+    pthread_mutex_t _safeThreadDictionaryMutex;//互斥锁
     pthread_mutexattr_t _safeThreadDictionaryMutexAttr;
 }
 
@@ -60,7 +60,9 @@ do { \
     self = [super init];
     if (self) {
         NSString* uuid = [NSString stringWithFormat:@"com.taobao.weex.dictionary_%p", self];
+        //并发队列
         _queue = dispatch_queue_create([uuid UTF8String], DISPATCH_QUEUE_CONCURRENT);
+        //递归锁
         pthread_mutexattr_init(&(_safeThreadDictionaryMutexAttr));
         pthread_mutexattr_settype(&(_safeThreadDictionaryMutexAttr), PTHREAD_MUTEX_RECURSIVE);
         pthread_mutex_init(&(_safeThreadDictionaryMutex), &(_safeThreadDictionaryMutexAttr));

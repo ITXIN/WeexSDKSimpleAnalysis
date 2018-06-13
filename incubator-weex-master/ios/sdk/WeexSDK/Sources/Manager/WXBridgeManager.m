@@ -33,7 +33,7 @@
 #import "WXSDKInstance_performance.h"
 
 @interface WXBridgeManager ()
-
+//比较重要的一个属性
 @property (nonatomic, strong) WXBridgeContext   *bridgeCtx;
 @property (nonatomic, assign) BOOL  stopRunning;
 @property (nonatomic, strong) NSMutableArray *instanceIdStack;
@@ -75,6 +75,7 @@ static NSThread *WXBridgeThread;
 }
 
 #pragma mark Thread Management
+//于是这里就给jsThread开启了一个runloop。这里是用[NSMachPort port]的方式开启的runloop，之后再也无法获取到这个port了，而且这个runloop不是CFRunloop，所以用官方文档上的那3个方法已经不能停止这个runloop了，只能自己通过while的方式来停止。
 
 - (void)_runLoopThread
 {
@@ -86,7 +87,7 @@ static NSThread *WXBridgeThread;
         }
     }
 }
-
+//jsThread会把@selector(_runLoopThread)作为selector。
 + (NSThread *)jsThread
 {
     static dispatch_once_t onceToken;
@@ -106,7 +107,9 @@ static NSThread *WXBridgeThread;
     return WXBridgeThread;
 }
 
-
+/*
+ block闭包是在jsThread的线程中执行的，并非主线程。WXBridgeManager会新建一个名为@"com.taobao.weex.bridge"的jsThread线程，所有的组件注册都在这个子线程中执行的。这个jsThread也是一个单例，全局唯一。
+ */
 void WXPerformBlockOnBridgeThread(void (^block)(void))
 {
     [WXBridgeManager _performBlockOnBridgeThread:block];

@@ -58,19 +58,19 @@ _Pragma("clang diagnostic pop") \
 } while (0)
 
 @interface WXBridgeContext ()
-
+//用来和js进行交互的Bridge
 @property (nonatomic, strong) id<WXBridgeProtocol>  jsBridge;
 @property (nonatomic, strong) id<WXBridgeProtocol> devToolSocketBridge;
 @property (nonatomic, assign) BOOL  debugJS;
-//store the methods which will be executed from native to js
+//store the methods which will be executed from native to js （存储native要即将调用js的一些方法）
 @property (nonatomic, strong) NSMutableDictionary   *sendQueue;
-//the instance stack
+//the instance stack（实例的一些堆栈）
 @property (nonatomic, strong) WXThreadSafeMutableArray    *insStack;
-//identify if the JSFramework has been loaded
+//identify if the JSFramework has been loaded（标识JSFramework是否已经加载完成）
 @property (nonatomic) BOOL frameworkLoadFinished;
-//store some methods temporarily before JSFramework is loaded
+//store some methods temporarily before JSFramework is loaded（在JSFramework加载完成之前，临时存储一些方法）
 @property (nonatomic, strong) NSMutableArray *methodQueue;
-// store service
+// store service（存储js模板的service）
 @property (nonatomic, strong) NSMutableArray *jsServiceQueue;
 
 @end
@@ -831,7 +831,7 @@ _Pragma("clang diagnostic pop") \
     
     [self callJSMethod:@"registerModules" args:@[modules]];
 }
-
+//其实调用的是js的方法"registerComponents"。
 - (void)registerComponents:(NSArray *)components
 {
     WXAssertBridgeThread();
@@ -840,7 +840,9 @@ _Pragma("clang diagnostic pop") \
     
     [self callJSMethod:@"registerComponents" args:@[components]];
 }
-
+/*
+ 由于是在子线程上注册组件，那么JSFramework如果没有加载完成，native去调用js的方法，必定调用失败。所以需要在JSFramework加载完成之前，把native调用JS的方法都缓存起来，一旦JSFramework加载完成，把缓存里面的方法都丢给JSFramework去加载。
+ */
 - (void)callJSMethod:(NSString *)method args:(NSArray *)args
 {
     if (self.frameworkLoadFinished) {

@@ -150,13 +150,41 @@
         [_jsContext evaluateScript:frameworkScript];
     }
 }
-
+/*
+ JSContext：Aninstance of JSContext represents a JavaScript execution environment.（一个 Context 就是一个 JavaScript 代码执行的环境，也叫作用域。）
+ 
+ JSValue：Conversionbetween Objective-C and JavaScript types.（JS是弱类型的，ObjectiveC是强类型的，JSValue被引入处理这种类型差异，在Objective-C 对象和 JavaScript 对象之间起转换作用）
+ JSContext：给JavaScript提供运行的上下文环境,通过-evaluateScript:方法就可以执行一JS代码
+ JSValue：JavaScript和Objective-C数据和方法的桥梁,封装了JS与ObjC中的对应的类型，以及调用JS的API等，提供了多种方法可以方便的将JavaScript数据类型转换成OC或者转换过去。
+ JSManagedValue：管理数据和方法的类
+ JSVirtualMachine：处理线程相关，使用较少
+ JSExport：这是一个协议，如果采用协议的方法交互，自己定义的协议必须遵守此协议
+ 
+ 链接：https://www.jianshu.com/p/fad8c7844d3e
+ 链接：https://www.jianshu.com/p/1ecd7416b2fd
+ Block可以传入JSContext作方法，但是JSValue没有toBlock方法来把JavaScript方法变成Block在Objetive-C中使用。毕竟Block的参数个数和类型已经返回类型都是固定的。虽然不能把方法提取出来，但是JSValue提供了- (JSValue *)callWithArguments:(NSArray *)arguments;
+ 方法可以反过来将参数传进去来调用方法。
+ JSContext *context = [[JSContext alloc] init];
+ [context evaluateScript:@"function add(a, b) { return a + b; }"];
+ JSValue *add = context[@"add"];
+ NSLog(@"Func: %@", add);
+ JSValue *sum = [add callWithArguments:@[@(7), @(21)]];
+ NSLog(@"Sum: %d",[sum toInt32]);
+ // OutPut:
+ // Func: function add(a, b) { return a + b; }
+ // Sum: 28
+ JSValue
+ 还提供- (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments;
+ 让我们可以直接简单地调用对象上的方法。只是如果定义的方法是全局函数，那么很显然应该在JSContext的globalObject对象上调用该方法；如果是某JavaScript对象上的方法，就应该用相应的JSValue
+ */
+//由于这些注册的方法的定义是全局函数，那么很显然应该在JSContext的globalObject对象上调用该方法
+#warning 有点不明白这个
 - (JSValue *)callJSMethod:(NSString *)method args:(NSArray *)args
 {
     WXLogDebug(@"Calling JS... method:%@, args:%@", method, args);
     return [[_jsContext globalObject] invokeMethod:method withArguments:args];
 }
-
+//js端是直接调用方法
 - (void)registerCallNative:(WXJSCallNative)callNative
 {
     JSValue* (^callNativeBlock)(JSValue *, JSValue *, JSValue *) = ^JSValue*(JSValue *instance, JSValue *tasks, JSValue *callback){

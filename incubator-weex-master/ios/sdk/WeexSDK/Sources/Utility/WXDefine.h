@@ -101,7 +101,7 @@ parts = [parts subarrayWithRange:(NSRange){0, parts.count - 1}];\
 
 #define WX_INSTANCE_JSCONTEXT_CREATE_NOTIFICATION @"WX_INSTANCE_JSCONTEXT_CREATE_NOTIFICATION"
 
-/**
+/** 对外暴露类方法的。
  *  @abstract export public method
  */
 #define WX_EXPORT_METHOD(method) WX_EXPORT_METHOD_INTERNAL(method,wx_export_method_)

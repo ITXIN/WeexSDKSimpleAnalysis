@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+/*WXAppConfiguration是一个用来记录App配置信息的单例对象*/
 #import <Foundation/Foundation.h>
 
 @interface WXAppConfiguration : NSObject
@@ -39,7 +39,7 @@
 + (NSString *)appVersion;
 + (void)setAppVersion:(NSString *)appVersion;
 
-/**
+/**app外面用户代理的名字, 所有Weex的请求头都会设置用户代理user agent字段，默认值为nil
  * @abstract External user agent of your app, all requests sent by weex will set the user agent on header,  default value is nil.
  */
 + (NSString *)externalUserAgent;
