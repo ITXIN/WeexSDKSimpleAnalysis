@@ -122,6 +122,7 @@ static WXModuleFactory *_sharedInstance = nil;
     WXAssert(name && clazz, @"Fail to register the module, please check if the parameters are correct ！");
     
     [_moduleLock lock];
+    // 这里需要注意的是：注册模块是允许同名模块的
     //allow to register module with the same name;
     WXModuleConfig *config = [[WXModuleConfig alloc] init];
     config.name = name;
@@ -136,6 +137,7 @@ static WXModuleFactory *_sharedInstance = nil;
 - (NSMutableDictionary *)_moduleMethodMapsWithName:(NSString *)name
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+//    这里遍历模块的方法列表和组件的有所不同。首先模块是有默认方法的。所有的模块都有addEventListener和removeAllEventListeners方法。第二个不同就是模块会遍历所有的同步和异步方法，(组件只会遍历异步方法)。最终返回生成模块的所有方法的字典。
     NSMutableArray *methods = [self _defaultModuleMethod];
     
     [_moduleLock lock];

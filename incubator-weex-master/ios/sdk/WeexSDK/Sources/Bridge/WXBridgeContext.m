@@ -87,7 +87,9 @@ _Pragma("clang diagnostic pop") \
     }
     return self;
 }
-
+/*
+ 第一次进入这个函数没有jsBridge实例的时候，会先生成WXJSCoreBridge的实例，然后紧接着注册全局的函数。等第二次再调用这个函数的时候，_jsBridge已经是WXJSCoreBridge类型了，就会直接return，下面的语句也不会再重复执行了。
+ */
 - (id<WXBridgeProtocol>)jsBridge
 {
     WXAssertBridgeThread();
@@ -105,7 +107,7 @@ _Pragma("clang diagnostic pop") \
     }
     
     _jsBridge = _debugJS ? [NSClassFromString(@"WXDebugger") alloc] : [[WXJSCoreBridge alloc] init];
-    
+//    这4个闭包就是OC封装暴露给JS的4个全局函数。
     [self registerGlobalFunctions];
     
     return _jsBridge;
@@ -119,7 +121,7 @@ _Pragma("clang diagnostic pop") \
     }
     return TRUE;
 }
-
+//这4个闭包就是OC封装暴露给JS的4个全局函数。
 - (void)registerGlobalFunctions
 {
     __weak typeof(self) weakSelf = self;
@@ -699,7 +701,7 @@ _Pragma("clang diagnostic pop") \
     WXAssertParam(script);
     
     WX_MONITOR_PERF_START(WXPTFrameworkExecute);
-
+//执行JSFramework
     [self.jsBridge executeJSFramework:script];
     
     WX_MONITOR_PERF_END(WXPTFrameworkExecute);
@@ -711,27 +713,32 @@ _Pragma("clang diagnostic pop") \
         WX_MONITOR_FAIL(WXMTJSFramework, WX_ERR_JSFRAMEWORK_EXECUTE, errMsg);
     } else {
         WX_MONITOR_SUCCESS(WXMTJSFramework);
+        
+        // 至此JSFramework算完全加载完成了
         //the JSFramework has been load successfully.
         self.frameworkLoadFinished = YES;
         
+           // 执行所有注册的JsService
         [self executeAllJsService];
         
+        // 获取JSFramework版本号
         JSValue *frameworkVersion = [self.jsBridge callJSMethod:@"getJSFMVersion" args:nil];
         if (frameworkVersion && [frameworkVersion isString]) {
+            // 把版本号存入WXAppConfiguration中
             [WXAppConfiguration setJSFrameworkVersion:[frameworkVersion toString]];
         }
         
         if (script) {
              [WXAppConfiguration setJSFrameworkLibSize:[script lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
         }
-        
+         // 执行之前缓存在_methodQueue数组里面的所有方法
         //execute methods which has been stored in methodQueue temporarily.
         for (NSDictionary *method in _methodQueue) {
             [self callJSMethod:method[@"method"] args:method[@"args"]];
         }
         
         [_methodQueue removeAllObjects];
-        
+         // 至此，初始化工作算完成了。
         WX_MONITOR_PERF_END(WXPTInitalize);
     };
 }
@@ -822,7 +829,7 @@ _Pragma("clang diagnostic pop") \
                                      }];
     }
 }
-
+//其实调用的是js的方法"registerModules"。
 - (void)registerModules:(NSDictionary *)modules
 {
     WXAssertBridgeThread();

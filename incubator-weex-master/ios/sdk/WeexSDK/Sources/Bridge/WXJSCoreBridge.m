@@ -136,7 +136,9 @@
 }
 
 #pragma mark - WXBridgeProtocol
-
+/*
+ 加载JSFramework的核心代码在这里，通过JSContext执行evaluateScript:来加载JSFramework。由于这里并没有返回值，所以加载的JSFramework的目的仅仅是声明了里面的所有方法，并没有调用。这也符合OC加载其他Framework的过程，加载只是加载到内存中，Framework里面的方法可以随时被调用，而不是一加载就调用其所有的方法。
+ */
 - (void)executeJSFramework:(NSString *)frameworkScript
 {
     WXAssertParam(frameworkScript);
