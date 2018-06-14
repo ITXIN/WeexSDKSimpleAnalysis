@@ -244,7 +244,7 @@ static NSThread *WXComponentThread;
     
 }
 
-
+//js调用native 添加视图元素
 - (void)addComponent:(NSDictionary *)componentData toSupercomponent:(NSString *)superRef atIndex:(NSInteger)index appendingInTree:(BOOL)appendingInTree
 {
     WXAssertComponentThread();
@@ -299,7 +299,9 @@ static NSThread *WXComponentThread;
         BOOL isFSCreateFinish = [self weexInstance].isJSCreateFinish;
         [self _addUITask:^{
             [WXTracingManager startTracingWithInstanceId:weakSelf.weexInstance.instanceId ref:componentData[@"ref"] className:nil name:componentData[@"type"] phase:WXTracingBegin functionName:@"addElement" options:@{@"threadName":WXTUIThread}];
+            //添加视图
             [supercomponent insertSubview:component atIndex:index];
+            
             [WXTracingManager startTracingWithInstanceId:weakSelf.weexInstance.instanceId ref:componentData[@"ref"] className:nil name:componentData[@"type"] phase:WXTracingEnd functionName:@"addElement" options:@{@"threadName":WXTUIThread}];
             [weakSelf onElementChange:isFSCreateFinish];
         }];

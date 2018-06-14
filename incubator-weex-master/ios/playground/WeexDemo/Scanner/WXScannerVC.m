@@ -113,7 +113,7 @@
     }
     [self jsReplace:url];
     WXDemoViewController * controller = [[WXDemoViewController alloc] init];
-    controller.url = url;
+    controller.url = url;//扫描二维码能打开一个新的页面，原因只是给这个新的页面配置了一个URL，仅此而已。
     controller.source = @"scan";
     
     NSMutableDictionary *queryDict = [NSMutableDictionary new];
@@ -126,12 +126,13 @@
     }else {
         queryDict = [self queryWithURL:url];
     }
+//    连接websocket 是为了更改.we文件或者.vue文件能及时的在手机上看见更改
     NSString *wsport = queryDict[@"wsport"] ?: @"8082";
     NSURL *socketURL = [NSURL URLWithString:[NSString stringWithFormat:@"ws://%@:%@", url.host, wsport]];
     controller.hotReloadSocket = [[SRWebSocket alloc] initWithURL:socketURL protocols:@[@"echo-protocol"]];
     controller.hotReloadSocket.delegate = controller;
     [controller.hotReloadSocket open];
-    
+    //页面跳转
     [[self navigationController] pushViewController:controller animated:YES];
 }
 

@@ -284,7 +284,7 @@ typedef enum : NSUInteger {
         mainBundleString = [WXDebugTool getReplacedBundleJS];
     }
     
-    //TODO WXRootView
+    //TODO WXRootView   //生成WXRootView
     WXPerformBlockOnMainThread(^{
         _rootView = [[WXRootView alloc] initWithFrame:self.frame];
         _rootView.instance = self;
@@ -292,6 +292,7 @@ typedef enum : NSUInteger {
             self.onCreate(_rootView);
         }
     });
+     // 再次注册默认的模块modules、组件components、handlers，以确保在创建instance之前它们都被注册了
     // ensure default modules/components/handlers are ready before create instance
     [WXSDKEngine registerDefaults];
      [[NSNotificationCenter defaultCenter] postNotificationName:WX_SDKINSTANCE_WILL_RENDER object:self];
@@ -308,6 +309,8 @@ typedef enum : NSUInteger {
     
     _needDestroy = YES;
     [WXTracingManager startTracingWithInstanceId:self.instanceId ref:nil className:nil name:WXTExecJS phase:WXTracingBegin functionName:@"renderWithMainBundleString" options:@{@"threadName":WXTMainThread}];
+    
+    // 开始createInstance
     [[WXSDKManager bridgeMgr] createInstance:self.instanceId template:mainBundleString options:dictionary data:_jsData];
     [WXTracingManager startTracingWithInstanceId:self.instanceId ref:nil className:nil name:WXTExecJS phase:WXTracingEnd functionName:@"renderWithMainBundleString" options:@{@"threadName":WXTMainThread}];
     
@@ -348,7 +351,7 @@ typedef enum : NSUInteger {
     [self _renderWithMainBundleString:_mainBundleString];
 }
 
-- (void)_renderWithRequest:(WXResourceRequest *)request options:(NSDictionary *)options data:(id)data;
+- (void)_renderWithRequest:(WXResourceRequest *)request options:(NSDictionary *)options data:(id)data
 {
     NSURL *url = request.URL;
     _scriptURL = url;
@@ -373,7 +376,8 @@ typedef enum : NSUInteger {
     
     WX_MONITOR_INSTANCE_PERF_START(WXPTJSDownload, self);
     __weak typeof(self) weakSelf = self;
-    _mainBundleLoader = [[WXResourceLoader alloc] initWithRequest:request];;
+    _mainBundleLoader = [[WXResourceLoader alloc] initWithRequest:request];
+    //请求完成回调
     _mainBundleLoader.onFinished = ^(WXResourceResponse *response, NSData *data) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         NSError *error = nil;
@@ -428,13 +432,13 @@ typedef enum : NSUInteger {
                 return;
             }
         }
-        
+        //处理
         [strongSelf _renderWithMainBundleString:jsBundleString];
         [WXTracingManager setBundleJSType:jsBundleString instanceId:weakSelf.instanceId];
         [WXMonitor performanceFinishWithState:DebugAfterRequest instance:strongSelf];
     
     };
-    
+      // 请求失败的回调
     _mainBundleLoader.onFailed = ^(NSError *loadError) {
         NSString *errorMessage = [NSString stringWithFormat:@"Request to %@ occurs an error:%@", request.URL, loadError.localizedDescription];
         

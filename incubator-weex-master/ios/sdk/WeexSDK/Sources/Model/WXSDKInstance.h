@@ -28,54 +28,54 @@ extern NSString *const bundleUrlOptionKey;
 
 @interface WXSDKInstance : NSObject
 
-/**
+/**  当前需要渲染的viewController
  * The viewControler which the weex bundle is rendered in.
  **/
 @property (nonatomic, weak) UIViewController *viewController;
 
-/**
+/** Native根容器的View是完全受WXSDKInstance控制，开发者无法更改
  * The Native root container used to bear the view rendered by weex file. 
  * The root view is controlled by WXSDKInstance, so you can only get it, but not change it.
  **/
 @property (nonatomic, strong) UIView *rootView;
 
-/**
+/** 如果组件想固定rootview的frame，可以把这个属性设置为YES，当weex进行layout的时候，就不会改变rootview的frame了。反之设置为NO
  * Component can freeze the rootview frame through the variable isRootViewFrozen
  * If Component want to freeze the rootview frame, set isRootViewFrozen YES, weex will not change the rootview frame when layout,or set NO.
  **/
 @property (nonatomic, assign) BOOL isRootViewFrozen;
 
-/**
+/** 表示当前实例需要验证或不需要加载，默认值为false
  * Which indicates current instance needs to be validated or not to load,default value is false.
  **/
 @property (nonatomic, assign) BOOL needValidate;
 
-/**
+/** weex bundle的scriptURL
  * The scriptURL of weex bundle.
  **/
 @property (nonatomic, strong) NSURL *scriptURL;
 
-/**
+/** 父类 instance
  * The parent instance.
  **/
 @property (nonatomic, weak) WXSDKInstance *parentInstance;
 
-/**
+/** 父Instance节点的引用
  * The node reference of parent instance.
  **/
 @property (nonatomic, weak) NSString *parentNodeRef;
 
-/**
+/** 用来标识当前weex instance独一无二的ID
  * The unique id to identify current weex instance.
  **/
 @property (nonatomic, strong) NSString *instanceId;
 
-/**
+/** 表示当前实例需要为预发布，默认值为false
  * Which indicates current instance needs to be prerender or not,default value is false.
  **/
 @property (nonatomic, assign) BOOL needPrerender;
 
-/**
+/** 当前weex instance的状态
  * The state of current instance.
  **/
 typedef NS_ENUM(NSInteger, WXState) {//state.code
@@ -105,28 +105,28 @@ typedef NS_ENUM(NSInteger, WXErrorCode) {//error.code
 
 @property (nonatomic, assign) WXState state;
 
-/**
+/** 当weex instance完成rootView的创建时的回调block
  *  The callback triggered when the instance finishes creating the body.
  *
  *  @return A block that takes a UIView argument, which is the root view
  **/
 @property (nonatomic, copy) void (^onCreate)(UIView *);
 
-/**
+/** 根容器的frame改变时候的回调
  *  The callback triggered when the root container's frame has changed.
  *
  *  @return A block that takes a UIView argument, which is the root view
  **/
 @property (nonatomic, copy) void (^onLayoutChange)(UIView *);
 
-/**
+/**  当weex instance完成渲染时的回调block
  *  The callback triggered when the instance finishes rendering.
  *
  *  @return A block that takes a UIView argument, which is the root view
  **/
 @property (nonatomic, copy) void (^renderFinish)(UIView *);
 
-/**
+/** 当weex instance刷新完成时的回调block
  *  The callback triggered when the instance finishes refreshing weex view.
  *
  *  @return A block that takes a UIView argument, which is the root view
@@ -138,7 +138,7 @@ typedef NS_ENUM(NSInteger, WXErrorCode) {//error.code
  */
 @property (nonatomic, strong) NSString * bundleType;
 
-/**
+/** 当weex instance渲染失败时的回调block
  *  The callback triggered when the instance fails to render.
  *
  *  @return A block that takes a NSError argument, which is the error occured
@@ -146,34 +146,34 @@ typedef NS_ENUM(NSInteger, WXErrorCode) {//error.code
 @property (nonatomic, copy) void (^onFailed)(NSError *error);
 
 /**
- *
+ * runtime JavaScript
  *  @return instance runtime JavaScript.
  *  you must call it in brige thread. Learn more at WXPerformBlockOnBridgeThread
  **/
 - (id<WXBridgeProtocol>)instanceJavaScriptContext;
 
-/**
+/** js 异常回调处理
  *  The callback triggered when js occurs runtime error while executing.
  *
  *  @return A block that takes a WXJSExceptionInfo argument, which is the exception info
  **/
 @property (nonatomic, copy) void (^onJSRuntimeException)(WXJSExceptionInfo * jsException);
 
-/**
+/** 当weex instance页面滚动时的回调block
  *  The callback triggered when the instacne executes scrolling .
  *
  *  @return A block that takes a CGPoint argument, which is content offset of the scroller
  **/
 @property (nonatomic, copy) void (^onScroll)(CGPoint contentOffset);
 
-/**
+/** 当weex instance渲染进行中的回调block
  * the callback to be run repeatedly while the instance is rendering.
  *
  * @return A block that takes a CGRect argument, which is the rect rendered
  **/
 @property (nonatomic, copy) void (^onRenderProgress)(CGRect renderRect);
 
-/**
+/** bundleJS 请求完成回调
  * The callback triggered when the bundleJS request finished in the renderWithURL.
  * @return A block that takes response which the server response,request which send to server,data which the server returned and an error
  */
@@ -186,22 +186,22 @@ typedef NS_ENUM(NSInteger, WXErrorCode) {//error.code
 @property (nonatomic, copy) BOOL (^onRenderTerminateWhenJSDownloadedFinish)(WXResourceResponse *response,WXResourceRequest *request,NSData *data, NSError* error);
 
 
-/**
+/** 当前weex instance的fram
  *  the frame of current instance.
  **/
 @property (nonatomic, assign) CGRect frame;
 
-/**
+/** user存储的一些Info信息
  *  the info stored by user.
  */
 @property (atomic, strong) NSMutableDictionary *userInfo;
 
-/**
+/** css单元和设备像素的换算比例因子
  *  scale factor from css unit to device pixel.
  */
 @property (nonatomic, assign, readonly) CGFloat pixelScaleFactor;
 
-/**
+/** 是否监测组件的渲染
  * track component render
  */
 @property (nonatomic, assign)BOOL trackComponent;
@@ -243,7 +243,7 @@ typedef NS_ENUM(NSInteger, WXErrorCode) {//error.code
  **/
 - (void)renderView:(NSString *)source options:(NSDictionary *)options data:(id)data;
 
-/**
+/** forcedReload为YES，每次加载都会从URL重新读取，为NO，会从缓存中读取
  * Reload the js bundle from the current URL and rerender.
  *
  * @param forcedReload when this parameter is true, the js bundle will always be reloaded from the server. If it is false, the instance may reload the js bundle from its cache. Default is false.

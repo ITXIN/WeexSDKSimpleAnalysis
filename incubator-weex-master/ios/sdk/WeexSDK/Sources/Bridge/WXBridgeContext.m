@@ -147,6 +147,7 @@ _Pragma("clang diagnostic pop") \
             }
             [WXTracingManager startTracingWithInstanceId:instanceId ref:elementData[@"ref"] className:nil name:WXTDomCall phase:WXTracingBegin functionName:@"addElement" options:@{@"threadName":WXTDOMThread}];
             [manager startComponentTasks];
+            //添加视图元素
             [manager addComponent:elementData toSupercomponent:parentRef atIndex:index appendingInTree:NO];
             [WXTracingManager startTracingWithInstanceId:instanceId ref:elementData[@"ref"] className:nil name:WXTDomCall phase:WXTracingEnd functionName:@"addElement" options:@{@"threadName":WXTDOMThread}];
         });
@@ -546,6 +547,7 @@ _Pragma("clang diagnostic pop") \
             }
         } else {
             sdkInstance.callCreateInstanceContext = [NSString stringWithFormat:@"instanceId:%@\noptions:%@\ndata:%@",instanceIdString, newOptions,data];
+            //调用js 的createInstanceContext
             [self callJSMethod:@"createInstanceContext" args:@[instanceIdString, newOptions, data?:@[]] onContext:nil completion:^(JSValue *instanceContextEnvironment) {
                 if (sdkInstance.pageName) {
                     if (@available(iOS 8.0, *)) {
@@ -555,6 +557,7 @@ _Pragma("clang diagnostic pop") \
                     }
                 }
                 sdkInstance.createInstanceContextResult = [NSString stringWithFormat:@"%@", [[instanceContextEnvironment toDictionary] allKeys]];
+                #warning 这个地方不太明白？
                 JSGlobalContextRef instanceContextRef = sdkInstance.instanceJavaScriptContext.javaScriptContext.JSGlobalContextRef;
                 JSObjectRef instanceGlobalObject = JSContextGetGlobalObject(instanceContextRef);
                 for (NSString * key in [[instanceContextEnvironment toDictionary] allKeys]) {
@@ -579,7 +582,7 @@ _Pragma("clang diagnostic pop") \
                     [sdkInstance.instanceJavaScriptContext executeJavascript:raxAPIScript withSourceURL:[NSURL URLWithString:raxAPIScriptPath]];
                     sdkInstance.executeRaxApiResult = [NSString stringWithFormat:@"%@", [[sdkInstance.instanceJavaScriptContext.javaScriptContext.globalObject toDictionary] allKeys]];
                 }
-                
+                //执行js
                 if ([NSURL URLWithString:sdkInstance.pageName] || sdkInstance.scriptURL) {
                     [sdkInstance.instanceJavaScriptContext executeJavascript:jsBundleString withSourceURL:[NSURL URLWithString:sdkInstance.pageName]?:sdkInstance.scriptURL];
                 } else {

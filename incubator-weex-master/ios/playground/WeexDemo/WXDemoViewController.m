@@ -30,6 +30,7 @@
 #import "WXTracingManager.h"
 
 @interface WXDemoViewController () <UIScrollViewDelegate, UIWebViewDelegate>
+//一个WXSDKInstance就对应一个UIViewController，所以每个Weex的页面都有一个与之对应的WXSDKInstance。
 @property (nonatomic, strong) WXSDKInstance *instance;
 @property (nonatomic, strong) UIView *weexView;
 
@@ -125,6 +126,7 @@
 //    if ([_url.absoluteString isEqualToString:HOME_URL]) {
 //        [self.navigationController setNavigationBarHidden:YES];
 //    }
+//    由于WXSDKInstance是支持实时刷新，所以在创建的时候需要先销毁掉原来的，再创建一个新的。
     [_instance destroyInstance];
     _instance = [[WXSDKInstance alloc] init];
     if([WXPrerenderManager isTaskExist:[self.url absoluteString]]){

@@ -186,7 +186,7 @@
     WXLogDebug(@"Calling JS... method:%@, args:%@", method, args);
     return [[_jsContext globalObject] invokeMethod:method withArguments:args];
 }
-//js端是直接调用方法
+//js端是直接调用方法 WXBridgeProtocol
 - (void)registerCallNative:(WXJSCallNative)callNative
 {
     JSValue* (^callNativeBlock)(JSValue *, JSValue *, JSValue *) = ^JSValue*(JSValue *instance, JSValue *tasks, JSValue *callback){
