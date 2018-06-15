@@ -105,6 +105,7 @@
         [invocation invoke];
         return invocation;
     } else {
+        //异步处理
         [self _dispatchInvocation:invocation moduleInstance:moduleInstance];
         return nil;
     }
@@ -127,6 +128,7 @@
 
 - (void)_dispatchInvocation:(NSInvocation *)invocation moduleInstance:(id<WXModuleProtocol>)moduleInstance
 {
+    //dispatch_block_t是被提交到调度队列的代码块的原型，而该代码块没有参数和返回值，声明如下： typedef void (^dispatch_block_t)(void);
     // dispatch to user specified queue or thread, default is main thread
     dispatch_block_t dispatchBlock = ^ (){
         [invocation invoke];

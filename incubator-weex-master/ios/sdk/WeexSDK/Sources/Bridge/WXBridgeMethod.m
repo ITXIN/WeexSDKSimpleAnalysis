@@ -108,7 +108,7 @@
         WX_MONITOR_FAIL(WXMTJSBridge, WX_ERR_INVOKE_NATIVE, errorMessage);
         return nil;
     }
-    
+//    NSInvocation也是一种消息调用的方法，并且它的参数没有限制。
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
     invocation.target = target;
     invocation.selector = selector;
