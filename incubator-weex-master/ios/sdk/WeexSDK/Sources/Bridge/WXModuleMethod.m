@@ -43,7 +43,7 @@
     
     return self;
 }
-
+//方法执行
 - (NSInvocation *)invoke
 {
     if (self.instance.needValidate) {
@@ -100,7 +100,7 @@
 	
     [self commitModuleInvoke];
     NSInvocation *invocation = [self invocationWithTarget:moduleInstance selector:selector];
-    
+    //是否是同步方法，如果是立即执行
     if (isSync) {
         [invocation invoke];
         return invocation;

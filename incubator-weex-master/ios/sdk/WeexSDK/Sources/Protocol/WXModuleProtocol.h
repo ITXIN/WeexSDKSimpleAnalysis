@@ -29,7 +29,20 @@
 #define MSG_EXP         @"WX_EXCEPTION"
 
 @protocol WXModuleProtocol <NSObject>
-
+/*
+ 两个闭包都可以callback把data传递回给JS，data可以是字符串或者字典。
+ 
+ 这两个闭包的区别在于：
+ 
+ WXModuleCallback用于Module组件，为了节约内存，该回调只能回调通知JS一次，之后会被释放，多用于一次结果。
+ WXModuleKeepAliveCallback同样是用于Module组件，但是该回调可以设置是否为多次回调类型，如果设置了keepAlive，那么可以进行持续监听变化，多次回调，并返回给 JS。
+ 在Weex中使用WXModuleCallback回调，很多情况是把状态回调给JS，比如成功或者失败的状态，还有一些出错的信息回调给JS。
+ 
+ 作者：一缕殇流化隐半边冰霜
+ 链接：https://www.jianshu.com/p/419b96aecc39
+ 來源：简书
+ 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+ */
 /**
  * @abstract the module callback , result can be string or dictionary.
  * @discussion callback data to js, the id of callback function will be removed to save memory.

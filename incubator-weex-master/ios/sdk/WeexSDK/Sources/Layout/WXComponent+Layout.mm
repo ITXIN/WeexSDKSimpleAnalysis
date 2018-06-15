@@ -169,7 +169,7 @@ bool flexIsUndefined(float value) {
         }];
     }
 }
-
+//根据父视图的绝对位置计算frame
 - (void)_calculateFrameWithSuperAbsolutePosition:(CGPoint)superAbsolutePosition
                            gatherDirtyComponents:(NSMutableSet<WXComponent *> *)dirtyComponents
 {

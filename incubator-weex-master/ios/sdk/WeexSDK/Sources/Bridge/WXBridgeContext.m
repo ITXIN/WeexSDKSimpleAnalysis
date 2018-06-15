@@ -394,6 +394,7 @@ _Pragma("clang diagnostic pop") \
                 [newArguments removeObject:weexOptions];
             }
         }
+        //重点执行native方法
         WXModuleMethod *method = [[WXModuleMethod alloc] initWithModuleName:moduleName methodName:methodName arguments:[newArguments copy] options:[newOptions copy] instance:instance];
         if(![moduleName isEqualToString:@"dom"] && instance.needPrerender){
             [WXPrerenderManager storePrerenderModuleTasks:method forUrl:instance.scriptURL.absoluteString];
