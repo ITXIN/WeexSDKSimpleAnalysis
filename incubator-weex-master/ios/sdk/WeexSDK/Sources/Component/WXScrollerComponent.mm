@@ -414,7 +414,7 @@ WX_EXPORT_METHOD(@selector(resetLoadmore))
         stickyView.frame = (CGRect){origin,stickyView.frame.size};
     }
 }
-
+//由于Appear 事件和 Disappear 事件都必须要求是滚动视图，所以这里会遍历当前视图的supercomponent，直到找到一个遵循WXScrollerProtocol的supercomponent。
 - (void)addScrollToListener:(WXComponent *)target
 {
     BOOL has = NO;
@@ -785,7 +785,7 @@ WX_EXPORT_METHOD(@selector(resetLoadmore))
     }
     [_refreshComponent refresh];
 }
-
+//判断是否Appear了
 - (void)handleAppear
 {
     if (![self isViewLoaded]) {
@@ -842,6 +842,7 @@ WX_EXPORT_METHOD(@selector(resetLoadmore))
     CGFloat cright = cleft + CGRectGetWidth(component.calculatedFrame);
     
     CGFloat vtop = CGRectGetMinY(rect), vbottom = CGRectGetMaxY(rect), vleft = CGRectGetMinX(rect), vright = CGRectGetMaxX(rect);
+    // 判断当前可见区域是否包含在传入的滚动区域内，如果在，并且监听了appear事件，就触发appear事件，否则如果监听了disappear事件就触发disappear事件
     if(cbottom > vtop && ctop <= vbottom && cleft <= vright && cright > vleft){
         if(!target.hasAppear && component){
             target.hasAppear = YES;

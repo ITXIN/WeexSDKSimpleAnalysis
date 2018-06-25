@@ -515,10 +515,11 @@ _Pragma("clang diagnostic pop") \
     BOOL shoudMultiContext = [WXSDKManager sharedInstance].multiContext;
     __weak typeof(self) weakSelf = self;
     NSString * bundleType = nil;
-    
+    //bundleType 可以是Vue/Rax
     if (shoudMultiContext) {
         bundleType = [self _pareJSBundleType:instanceIdString jsBundleString:jsBundleString]; // bundleType can be Vue, Rax and the new framework.
     }
+    
     if (bundleType&&shoudMultiContext) {
         NSMutableDictionary *newOptions = [options mutableCopy];
         if (!options) {
@@ -528,8 +529,10 @@ _Pragma("clang diagnostic pop") \
         newOptions[@"bundleType"] = bundleType;
         NSString *raxAPIScript = nil;
         NSString *raxAPIScriptPath = nil;
+        //通过ID取出Instance
         WXSDKInstance *sdkInstance = [WXSDKManager instanceForID:instanceIdString];
         sdkInstance.bundleType = bundleType;
+        //
         if ([bundleType.lowercaseString isEqualToString:@"rax"]) {
              raxAPIScriptPath = [[NSBundle bundleForClass:[weakSelf class]] pathForResource:@"weex-rax-api" ofType:@"js"];
             raxAPIScript = [NSString stringWithContentsOfFile:raxAPIScriptPath encoding:NSUTF8StringEncoding error:nil];
@@ -578,7 +581,7 @@ _Pragma("clang diagnostic pop") \
                         WXLogError(@"weex-pollyfill can not found");
                     }
                 }
-                
+                //判断是否是rax
                 if (raxAPIScript) {
                     [sdkInstance.instanceJavaScriptContext executeJavascript:raxAPIScript withSourceURL:[NSURL URLWithString:raxAPIScriptPath]];
                     sdkInstance.executeRaxApiResult = [NSString stringWithFormat:@"%@", [[sdkInstance.instanceJavaScriptContext.javaScriptContext.globalObject toDictionary] allKeys]];

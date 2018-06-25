@@ -30,6 +30,7 @@
 
 @protocol WXModuleProtocol <NSObject>
 /*
+ 在Weex中，iOS Native把事件传递给JS目前只有2种方式，一是Module模块的callback，二是通过Component组件自定义的通知事件。
  两个闭包都可以callback把data传递回给JS，data可以是字符串或者字典。
  
  这两个闭包的区别在于：
@@ -42,6 +43,8 @@
  链接：https://www.jianshu.com/p/419b96aecc39
  來源：简书
  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+ 注册回调方法
+ WX_EXPORT_METHOD(@selector(push:callback:))
  */
 /**
  * @abstract the module callback , result can be string or dictionary.

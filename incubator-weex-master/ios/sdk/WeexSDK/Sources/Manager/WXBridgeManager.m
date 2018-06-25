@@ -162,10 +162,12 @@ void WXPerformBlockSyncOnBridgeThread(void (^block) (void))
     __weak typeof(self) weakSelf = self;
     WXPerformBlockOnBridgeThread(^(){
         [WXTracingManager startTracingWithInstanceId:instance ref:nil className:nil name:WXTExecJS phase:WXTracingBegin functionName:@"createInstance" options:@{@"threadName":WXTJSBridgeThread}];
+        //WXBridgeContext
         [weakSelf.bridgeCtx createInstance:instance
                                   template:temp
                                    options:options
                                       data:data];
+        
         [WXTracingManager startTracingWithInstanceId:instance ref:nil className:nil name:WXTExecJS phase:WXTracingEnd functionName:@"createInstance" options:@{@"threadName":WXTJSBridgeThread}];
         
     });

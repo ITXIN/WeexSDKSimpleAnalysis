@@ -143,7 +143,6 @@
 {
     [self fireEvent:eventName params:params domChanges:nil];
 }
-
 - (void)fireEvent:(NSString *)eventName params:(NSDictionary *)params domChanges:(NSDictionary *)domChanges
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -164,7 +163,7 @@
     
     NSArray *handlerArguments = [self _paramsForEvent:eventName];
     NSString *ref = _templateComponent ? _templateComponent.ref  : self.ref;
-    
+    //调用js
     [[WXSDKManager bridgeMgr] fireEvent:self.weexInstance.instanceId ref:ref type:eventName params:dict domChanges:domChanges handlerArguments:handlerArguments];
 }
 
@@ -237,7 +236,7 @@ if ([removeEventName isEqualToString:@#eventName]) {\
     if(_isListenPseudoTouch) {
         self.touchGesture.listenPseudoTouch = YES;
     }
-    
+  //  每个组件里面会可以重写这个方法。在这个方法里面做的就是对组件的状态的标识。
     [self addEvent:addEventName];
 }
 

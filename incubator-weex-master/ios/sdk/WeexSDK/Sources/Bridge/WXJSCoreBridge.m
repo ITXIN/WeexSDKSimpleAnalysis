@@ -180,7 +180,6 @@
  让我们可以直接简单地调用对象上的方法。只是如果定义的方法是全局函数，那么很显然应该在JSContext的globalObject对象上调用该方法；如果是某JavaScript对象上的方法，就应该用相应的JSValue
  */
 //由于这些注册的方法的定义是全局函数，那么很显然应该在JSContext的globalObject对象上调用该方法
-#warning 有点不明白这个
 - (JSValue *)callJSMethod:(NSString *)method args:(NSArray *)args
 {
     WXLogDebug(@"Calling JS... method:%@, args:%@", method, args);

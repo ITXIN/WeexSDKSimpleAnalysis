@@ -219,7 +219,9 @@ typedef enum : NSUInteger {
     
     self.needValidate = [[WXHandlerFactory handlerForProtocol:@protocol(WXValidateProtocol)] needValidate:url];
     
+    //创建 WXResourceRequest
     WXResourceRequest *request = [WXResourceRequest requestWithURL:url resourceType:WXResourceTypeMainBundle referrer:@"" cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    //关键-处理request
     [self _renderWithRequest:request options:options data:data];
     [WXTracingManager startTracingWithInstanceId:self.instanceId ref:nil className:nil name:WXTNetworkHanding phase:WXTracingBegin functionName:@"renderWithURL" options:@{@"bundleUrl":url?[url absoluteString]:@"",@"threadName":WXTMainThread}];
 }
@@ -237,7 +239,7 @@ typedef enum : NSUInteger {
     
     [WXTracingManager setBundleJSType:source instanceId:self.instanceId];
 }
-
+//请求完成后处理mainBundleString
 - (void)_renderWithMainBundleString:(NSString *)mainBundleString
 {
     if (!self.instanceId) {
@@ -266,7 +268,7 @@ typedef enum : NSUInteger {
     if (!self.userInfo[@"jsMainBundleStringContentLength"]) {
         self.userInfo[@"jsMainBundleStringContentMd5"] = [WXUtility md5:mainBundleString];
     }
-    
+    //没有调用？
     id<WXPageEventNotifyEventProtocol> pageEvent = [WXSDKEngine handlerForProtocol:@protocol(WXPageEventNotifyEventProtocol)];
     if ([pageEvent respondsToSelector:@selector(pageStart:)]) {
         [pageEvent pageStart:self.instanceId];
@@ -284,7 +286,7 @@ typedef enum : NSUInteger {
         mainBundleString = [WXDebugTool getReplacedBundleJS];
     }
     
-    //TODO WXRootView   //生成WXRootView
+    //TODO WXRootView 生成WXRootView
     WXPerformBlockOnMainThread(^{
         _rootView = [[WXRootView alloc] initWithFrame:self.frame];
         _rootView.instance = self;
@@ -299,6 +301,7 @@ typedef enum : NSUInteger {
      
     _needDestroy = YES;
     _mainBundleString = mainBundleString;
+    ////判断 multiContext 如果不一致判定失败
     if ([self _handleConfigCenter]) {
         NSError * error = [NSError errorWithDomain:WX_ERROR_DOMAIN code:9999 userInfo:nil];
         if (self.onFailed) {
@@ -319,6 +322,7 @@ typedef enum : NSUInteger {
 
 - (BOOL)_handleConfigCenter
 {
+    
     id configCenter = [WXSDKEngine handlerForProtocol:@protocol(WXConfigCenterProtocol)];
     if ([configCenter respondsToSelector:@selector(configForKey:defaultValue:isDefault:)]) {
         BOOL useCoreText = [[configCenter configForKey:@"iOS_weex_ext_config.text_render_useCoreText" defaultValue:@YES isDefault:NULL] boolValue];
@@ -367,11 +371,11 @@ typedef enum : NSUInteger {
         newOptions[bundleUrlOptionKey] = ((NSURL*)newOptions[bundleUrlOptionKey]).absoluteString;
     }
     _options = [newOptions copy];
-  
+  //pagename 检查
     if (!self.pageName || [self.pageName isEqualToString:@""]) {
         self.pageName = url.absoluteString ? : @"";
     }
-    
+    //用户代理包括一些信息
     request.userAgent = [WXUtility userAgent];
     
     WX_MONITOR_INSTANCE_PERF_START(WXPTJSDownload, self);

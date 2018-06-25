@@ -63,7 +63,7 @@
         WXLogWarning(@"The module class [%@] doesn't exit！", _clazz);
         return;
     }
-#warning 方法列表什么时候添加的？是通过 WX_EXPORT_METHOD 
+// 方法列表什么时候添加的？是通过 WX_EXPORT_METHOD 
     while (currentClass != [NSObject class]) {
         unsigned int methodCount = 0;
         // 获取类方法列表(+号方法)
