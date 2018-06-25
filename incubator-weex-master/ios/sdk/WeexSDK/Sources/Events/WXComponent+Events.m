@@ -179,7 +179,7 @@
 }
 
 #pragma mark Add & Remove Event
-
+// addEventName 是当前函数的参数，if条件是在当前函数中处理的。
 
 #define WX_ADD_EVENT(eventName, addSelector) \
 if ([addEventName isEqualToString:@#eventName]) {\
